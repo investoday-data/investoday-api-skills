@@ -1,6 +1,14 @@
 ---
 name: investoday
 description: 今日投资数据市场金融数据接口，覆盖A股/港股/基金/指数/宏观经济 180+ 个接口。当需要查询股票行情、财务报表、公司公告、研报评级、基金净值、行业分析、宏观经济指标时使用；或需要实体识别（股票代码与名称互转）、构建量化分析、生成投研报告等金融数据场景。
+homepage: https://github.com/investoday-data/investoday-api-skills.git
+metadata:
+  clawdbot:
+    emoji: "📈"
+    requires:
+      env: ["INVESTODAY_API_KEY"]
+    primaryEnv: "INVESTODAY_API_KEY"
+    files: ["scripts/*"]
 ---
 
 # 今日投资数据市场 (InvestToday)
@@ -92,6 +100,20 @@ python skills/scripts/call_api.py fund/daily-quotes --method POST fundCode=00000
 |  | 特色数据 | 3 | [特色数据.md](references/基金/特色数据.md) |
 |  | ETF基金 | 2 | [ETF基金.md](references/基金/ETF基金.md) |
 |  | 基金财务数据 | 2 | [基金财务数据.md](references/基金/基金财务数据.md) |
+
+## 安全与隐私
+
+- **离开本机的数据**：接口路径、查询参数、`INVESTODAY_API_KEY`（通过 HTTPS 发送至 `data-api.investoday.net`）
+- **不离开本机的数据**：本地文件、环境中的其他变量、对话内容
+- API Key 仅用于身份验证，不会被记录或转发至第三方
+
+## 外部接口
+
+| 端点 | 用途 | 发送的数据 |
+|------|------|-----------|
+| `https://data-api.investoday.net/data/cloud/*` | 金融数据查询 | API Key（Header）、查询参数 |
+
+> **信任声明**：本 Skill 会将查询请求发送至今日投资数据平台（`data-api.investoday.net`）。请在信任该平台后再安装使用。
 
 ## 相关链接
 
