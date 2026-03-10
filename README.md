@@ -60,4 +60,12 @@ cp -r skills/ ~/.claude/skills/investoday/
 
 ---
 
+## 相关链接
+
+- [官方网站](https://data-api.investoday.net/hub?url=%2Fapidocs%2Fai-native-financial-data)
+- [常见问题](https://data-api.investoday.net/hub?url=%2Fapidocs%2Ffaq)
+- [联系我们](https://data-api.investoday.net/hub?url=%2Fapidocs%2Fcontact-me)
+
+---
+
 > 本 Skill 提供的金融数据仅供参考，不构成投资建议。请遵守相关法律法规和交易所规定，合法合规使用数据。
