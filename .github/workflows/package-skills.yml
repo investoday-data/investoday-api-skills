@@ -1,0 +1,53 @@
+name: Package Skills
+
+on:
+  # 在 Update API References workflow 完成后自动触发
+  workflow_run:
+    workflows: ["Update API References"]
+    types:
+      - completed
+
+  # 支持手动触发
+  workflow_dispatch:
+
+jobs:
+  package:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          # 拉取最新提交（update-references 可能刚推送了新内容）
+          ref: main
+
+      - name: Package skills folder
+        run: |
+          cd skills
+          zip -r ../skills.zip .
+          cd ..
+
+      - name: Check for changes
+        id: changes
+        run: |
+          git diff --quiet skills.zip 2>/dev/null && \
+            git ls-files --error-unmatch skills.zip 2>/dev/null && \
+            echo "changed=false" >> $GITHUB_OUTPUT || \
+            echo "changed=true" >> $GITHUB_OUTPUT
+
+      - name: Commit and push skills.zip
+        if: steps.changes.outputs.changed == 'true'
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add skills.zip
+          git commit -m "chore: update skills.zip [skip ci]"
+          git pull --rebase origin main
+          git push
+
+      - name: No changes detected
+        if: steps.changes.outputs.changed == 'false'
+        run: echo "✅ skills.zip already up-to-date, nothing to commit."
