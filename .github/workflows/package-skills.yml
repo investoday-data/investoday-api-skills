@@ -69,7 +69,7 @@ jobs:
           cos_bucket: ${{ secrets.COS_BUCKET }}
           cos_region: ${{ secrets.COS_REGION }}
           local_path: investoday-finance-data-skills.zip
-          remote_path: /application/skill-store/packages/investoday-finance-data/investoday-finance-data-skills.zip
+          remote_path: application/skill-store/packages/investoday-finance-data
           cos_replace_file: 'true'
           cdn_type: cdn
           cdn_prefix: https://storage.txyun.investoday.net/application/skill-store/packages/investoday-finance-data/investoday-finance-data-skills.zip
