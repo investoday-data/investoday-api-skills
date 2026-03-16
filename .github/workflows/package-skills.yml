@@ -60,3 +60,16 @@ jobs:
       - name: No changes detected
         if: steps.changes.outputs.changed == 'false'
         run: echo "✅ investoday-finance-data-skills.zip already up-to-date, nothing to commit."
+
+      - name: Upload to Tencent Cloud COS and purge CDN
+        uses: sylingd/tencent-cos-and-cdn-action@v1
+        with:
+          secret_id: ${{ secrets.TENCENT_SECRET_ID }}
+          secret_key: ${{ secrets.TENCENT_SECRET_KEY }}
+          cos_bucket: ${{ secrets.COS_BUCKET }}
+          cos_region: ${{ secrets.COS_REGION }}
+          local_path: investoday-finance-data-skills.zip
+          remote_path: /application/skill-store/packages/investoday-finance-data/investoday-finance-data-skills.zip
+          cos_replace_file: 'true'
+          cdn_type: cdn
+          cdn_prefix: https://storage.txyun.investoday.net/application/skill-store/packages/investoday-finance-data/investoday-finance-data-skills.zip
