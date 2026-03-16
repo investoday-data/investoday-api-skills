@@ -44,29 +44,37 @@ REQUEST_TIMEOUT = 30
 
 # ─── API Key 加载 ──────────────────────────────────────────────────────────────
 
+def _read_env_key(env_file: Path) -> str | None:
+    """从 .env 文件中读取 INVESTODAY_API_KEY，找不到返回 None。"""
+    if not env_file.exists():
+        return None
+    for line in env_file.read_text(encoding="utf-8").splitlines():
+        line = line.strip()
+        if line.startswith("#") or "=" not in line:
+            continue
+        k, _, v = line.partition("=")
+        if k.strip() == "INVESTODAY_API_KEY":
+            val = v.strip().strip('"').strip("'")
+            if val:
+                return val
+    return None
+
+
 def load_api_key() -> str:
     # 1. 环境变量
     key = os.environ.get("INVESTODAY_API_KEY", "").strip()
     if key:
         return key
 
-    # 2. .env 文件（向上查找）
-    search_dir = Path(__file__).parent
-    for _ in range(5):
-        env_file = search_dir / ".env"
-        if env_file.exists():
-            for line in env_file.read_text(encoding="utf-8").splitlines():
-                line = line.strip()
-                if line.startswith("#") or "=" not in line:
-                    continue
-                k, _, v = line.partition("=")
-                if k.strip() == "INVESTODAY_API_KEY":
-                    val = v.strip().strip('"').strip("'")
-                    if val:
-                        return val
-        search_dir = search_dir.parent
+    # 2. .env 文件 —— 仅在 Skill 根目录查找（scripts/ 的父目录，即与 SKILL.md 同级）
+    skill_root = Path(__file__).resolve().parent.parent
+    key = _read_env_key(skill_root / ".env")
+    if key:
+        return key
 
-    print("ERROR: 请配置apikey后请求", file=sys.stderr)
+    print("ERROR: 请配置 INVESTODAY_API_KEY 后再请求。"
+          "请在 Skill 根目录（与 SKILL.md 同级）创建 .env 文件，"
+          "或设置环境变量 INVESTODAY_API_KEY。", file=sys.stderr)
     sys.exit(1)
 
 # ─── 参数解析 ──────────────────────────────────────────────────────────────────
@@ -130,7 +138,6 @@ def call_api(api_path: str, method: str, params: dict, api_key: str) -> None:
 
     try:
         if method == "POST":
-            # POST：参数以 JSON body 发送，requests 会自动设置 Content-Type: application/json
             resp = requests.post(
                 url,
                 headers=headers,
@@ -138,7 +145,6 @@ def call_api(api_path: str, method: str, params: dict, api_key: str) -> None:
                 timeout=REQUEST_TIMEOUT,
             )
         else:
-            # GET：参数以 query string 发送
             resp = requests.get(
                 url,
                 headers=headers,
@@ -152,7 +158,11 @@ def call_api(api_path: str, method: str, params: dict, api_key: str) -> None:
         print(f"ERROR: 请求超时（{REQUEST_TIMEOUT}s）: {url}", file=sys.stderr)
         sys.exit(1)
     except requests.RequestException as e:
-        print(f"ERROR: 请求失败: {e}", file=sys.stderr)
+        # 异常信息可能包含 headers（含 API Key），需脱敏后输出
+        err_msg = str(e)
+        if api_key and api_key in err_msg:
+            err_msg = err_msg.replace(api_key, "***")
+        print(f"ERROR: 请求失败: {err_msg}", file=sys.stderr)
         sys.exit(1)
 
     try:

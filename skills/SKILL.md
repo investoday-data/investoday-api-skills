@@ -3,9 +3,57 @@ name: investoday-finance-data
 version: 1.0.3
 description: 今日投资数据市场金融数据接口，覆盖A股/港股/基金/指数/宏观经济 180+ 个接口。当需要查询股票行情、财务报表、公司公告、研报评级、基金净值、行业分析、宏观经济指标时使用；或需要实体识别（股票代码与名称互转）、构建量化分析、生成投研报告等金融数据场景。
 homepage: https://github.com/investoday-data/investoday-api-skills.git
+tags:
+  # 资产类别
+  - stock
+  - fund
+  - etf
+  - index
+  - bond
+  # 市场
+  - a-share
+  - hk-stock
+  - china-market
+  # 数据类型
+  - financial-data
+  - market-data
+  - quote
+  - realtime-quote
+  - financial-statement
+  - balance-sheet
+  - income-statement
+  - cash-flow
+  - valuation
+  - dividend
+  - ipo
+  - announcement
+  - research-report
+  - analyst-rating
+  - macro-economics
+  # 场景
+  - quantitative
+  - investment-research
+  - portfolio
+  - backtesting
+  - data-api
+  - finance-api
+  # 中文关键词（方便中文搜索）
+  - 股票
+  - 基金
+  - 行情
+  - 财务
+  - A股
+  - 港股
+  - 指数
+  - 宏观经济
+  - 研报
+  - 公告
+  - 量化
+  - 投研
 metadata:
   clawdbot:
     emoji: "📈"
+    category: "finance"
     requires:
       env: ["INVESTODAY_API_KEY"]
     primaryEnv: "INVESTODAY_API_KEY"
@@ -19,20 +67,26 @@ metadata:
 ## API Key
 
 - [注册获取 API Key](https://data-api.investoday.net/login)
-- 方式一：配置环境变量
-```bash
-export INVESTODAY_API_KEY=your_key_here
+- 在当前 Skill 所在的根目录创建 `.env` 文件（与 `SKILL.md` 同级目录），例如：
+  - Cursor：`.cursor/skills/investoday-finance-data/.env`
+  - Claude Code：`.claude/skills/investoday-finance-data/.env`
 ```
-- 方式二：在项目根目录创建 `.env` 文件
+INVESTODAY_API_KEY=<your_key>
 ```
-INVESTODAY_API_KEY=your_key_here
-```
+- 也可通过环境变量配置（注意不要在终端历史中留下明文 Key）
 
-**用户提供 API Key 时：**
-1. 写入 `.env`，确认 `.env` 已加入 `.gitignore`
-2. 配置完成后，**必须**向用户输出以下提示：
+**⚠️ API Key 安全规范（必须严格遵守）：**
+
+1. **禁止在任何控制台输出、日志、对话消息中显示 API Key 的明文内容**
+2. 用户提供 API Key 时：
+   - 直接写入 `.env` 文件，**不要** echo / print / 回显 Key 内容
+   - 确认 `.env` 已加入 `.gitignore`
+   - 写入完成后，**必须**向用户输出以下提示：
 
 > ✅ API Key 已配置完成。API Key 是您访问数据的唯一凭证，请妥善保管，切勿通过聊天、截图或代码提交等任何方式泄露给他人。
+
+3. 调用 API 时，**不要**在命令行参数、日志或错误信息中包含 API Key
+4. 如需验证 Key 是否已配置，只输出"已配置"或"未配置"，**不要**输出 Key 的任何部分
 
 ## 调用接口
 
@@ -119,3 +173,7 @@ python skills/scripts/call_api.py fund/daily-quotes --method POST fundCode=00000
 ## 相关链接
 
 [官方网站](https://data-api.investoday.net/hub?url=%2Fapidocs%2Fai-native-financial-data) · [常见问题](https://data-api.investoday.net/hub?url=%2Fapidocs%2Ffaq) · [联系我们](https://data-api.investoday.net/hub?url=%2Fapidocs%2Fcontact-me)
+
+## Keywords
+
+stock, fund, ETF, index, bond, A-share, HK stock, China market, financial data, market data, quote, realtime quote, financial statement, balance sheet, income statement, cash flow, valuation, dividend, IPO, announcement, research report, analyst rating, macro economics, quantitative, investment research, portfolio, backtesting, finance API, 股票, 基金, 行情, 财务, A股, 港股, 指数, 宏观经济, 研报, 公告, 量化, 投研, 净值, 分红, 财报, 龙虎榜, 融资融券, 大宗交易, 股东, 十大流通股东, 板块, 行业分析
