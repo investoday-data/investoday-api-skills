@@ -150,7 +150,13 @@ def validate_api_key(api_key: str) -> bool:
 # ─── 数据解析 ──────────────────────────────────────────────────────────────────
 
 def parse_openapi_paths(openapi: dict) -> dict[str, dict]:
-    """解析 OpenAPI paths，返回 operationId -> 接口详情 的映射"""
+    """
+    解析 OpenAPI paths，返回 lookup key -> 接口详情 的映射。
+
+    同一 operationId 可能同时存在 GET 和 POST（path 略有不同），
+    因此使用 (operationId, method) 作为复合 key，同时保留纯 operationId
+    作为 fallback（后出现的覆盖前面的）。
+    """
     path_map: dict[str, dict] = {}
     for path, methods in openapi.get("paths", {}).items():
         for method, operation in methods.items():
@@ -191,7 +197,7 @@ def parse_openapi_paths(openapi: dict) -> dict[str, dict]:
                         "type":     prop.get("type", "string"),
                     })
 
-            path_map[op_id] = {
+            detail = {
                 "path":            path.lstrip("/"),
                 "method":          http_method,
                 "summary":         operation.get("summary", ""),
@@ -199,6 +205,12 @@ def parse_openapi_paths(openapi: dict) -> dict[str, dict]:
                 "parameters":      params,
                 "response_fields": _extract_response_fields(operation),
             }
+
+            # 复合 key：operationId::METHOD，精确匹配
+            path_map[f"{op_id}::{http_method}"] = detail
+            # 纯 operationId 作为 fallback（后出现的覆盖前面的）
+            path_map[op_id] = detail
+
     return path_map
 
 
@@ -235,6 +247,7 @@ def flatten_tree(nodes: list, parent_path: list | None = None) -> list[dict]:
                 "tool_name":  api.get("toolName", ""),
                 "tool_id":    api.get("toolId", ""),
                 "api_path":   api.get("apiPath", ""),
+                "apiMethod":  api.get("apiMethod", ""),
             })
     return results
 
@@ -312,18 +325,47 @@ def _code_example(api_path: str, method: str, params: list[dict]) -> str:
     return f"```bash\n{cmd}\n```"
 
 
-def _render_api_block(api: dict, detail: dict) -> list[str]:
+def _detect_dual_method_ids(flat_apis: list[dict]) -> set[str]:
+    """检测同时存在 GET 和 POST 的 tool_id，返回这些 id 的集合。"""
+    from collections import defaultdict
+    method_map: dict[str, set[str]] = defaultdict(set)
+    for api in flat_apis:
+        tid = api.get("tool_id", "")
+        m = api.get("apiMethod", "").upper()
+        if tid and m:
+            method_map[tid].add(m)
+    return {tid for tid, methods in method_map.items() if len(methods) > 1}
+
+
+def _render_api_block(api: dict, detail: dict, dual_method_ids: set[str] | None = None) -> list[str]:
     """渲染单个接口的 Markdown 块"""
     lines = []
     api_path = api.get("api_path") or detail.get("path", "")
-    method   = detail.get("method", "GET")
+    # 优先用 tree 中的 apiMethod（精确），fallback 到 OpenAPI detail
+    method   = api.get("apiMethod", "").upper() or detail.get("method", "GET")
     desc     = detail.get("description", "")
     params   = detail.get("parameters", [])
 
-    lines.append(f"#### {api['api_name']}")
+    # 同一 tool_id 同时有 GET/POST 时，标题加方法后缀区分
+    tool_id   = api.get('tool_id', '')
+    is_dual   = dual_method_ids and tool_id in dual_method_ids
+    title_suffix = f"（{method}）" if is_dual else ""
+    lines.append(f"#### {api['api_name']}{title_suffix}")
     lines.append("")
     method_badge = "**`POST`**" if method == "POST" else "`GET`"
-    lines.append(f"接口：`{api.get('tool_name') or api.get('tool_id', '')}`　{method_badge}")
+    tool_name = api.get('tool_name') or tool_id
+    lines.append(f"接口：`{tool_name}`　")
+    lines.append(f"请求方式: {method_badge}　")
+    lines.append(f"tool_id: `{tool_id or tool_name}`")
+
+    # 同一 tool_id 双方法时，自动加说明
+    if is_dual:
+        if method == "POST":
+            lines.append("")
+            lines.append("> 📌 POST 版本，支持批量查询（可传多个标的）。")
+        else:
+            lines.append("")
+            lines.append("> 📌 GET 版本，兼容历史调用，仅支持单标的查询。推荐使用 POST 版本进行批量查询。")
     lines.append("")
 
     summary = detail.get("summary", "")
@@ -357,7 +399,44 @@ def _is_flat_group(top_group: str, sub_groups: dict) -> bool:
     return len(sub_groups) == 1 and list(sub_groups.keys())[0] == top_group
 
 
-def generate_subgroup_md(top_group: str, sub_group: str, apis: list, path_map: dict) -> str:
+def _lookup_api_detail(api: dict, path_map: dict) -> dict:
+    """
+    根据 tree 中的 api 条目查找 OpenAPI 详情。
+    优先用 tool_id::METHOD 精确匹配，再 fallback 到纯 tool_id / tool_name。
+    """
+    tool_id   = api.get("tool_id", "")
+    tool_name = api.get("tool_name", "")
+    method    = api.get("apiMethod", "").upper()
+
+    # 1. 精确匹配：tool_id::METHOD
+    if tool_id and method:
+        detail = path_map.get(f"{tool_id}::{method}")
+        if detail:
+            return detail
+
+    # 2. fallback: 纯 tool_id
+    if tool_id:
+        detail = path_map.get(tool_id)
+        if detail:
+            return detail
+
+    # 3. fallback: tool_name::METHOD
+    if tool_name and method:
+        detail = path_map.get(f"{tool_name}::{method}")
+        if detail:
+            return detail
+
+    # 4. fallback: 纯 tool_name
+    if tool_name:
+        detail = path_map.get(tool_name)
+        if detail:
+            return detail
+
+    return {}
+
+
+def generate_subgroup_md(top_group: str, sub_group: str, apis: list, path_map: dict,
+                         dual_method_ids: set[str] | None = None) -> str:
     """为一个子分组生成 .md 内容"""
     title = top_group if sub_group == top_group else f"{top_group} / {sub_group}"
     lines = [
@@ -367,14 +446,13 @@ def generate_subgroup_md(top_group: str, sub_group: str, apis: list, path_map: d
         "",
     ]
     for api in apis:
-        detail = path_map.get(api.get("tool_id", ""), {})
-        if not detail:
-            detail = path_map.get(api.get("tool_name", ""), {})
-        lines.extend(_render_api_block(api, detail))
+        detail = _lookup_api_detail(api, path_map)
+        lines.extend(_render_api_block(api, detail, dual_method_ids))
     return "\n".join(lines)
 
 
-def write_references(group_tree: dict, path_map: dict, output_dir: Path) -> list[dict]:
+def write_references(group_tree: dict, path_map: dict, output_dir: Path,
+                     dual_method_ids: set[str] | None = None) -> list[dict]:
     """
     按子分组写出 .md 文件，返回文件信息列表供 SKILL.md 索引使用。
 
@@ -389,7 +467,7 @@ def write_references(group_tree: dict, path_map: dict, output_dir: Path) -> list
         flat = _is_flat_group(top_group, sub_groups)
 
         for sub_group, apis in sub_groups.items():
-            content = generate_subgroup_md(top_group, sub_group, apis, path_map)
+            content = generate_subgroup_md(top_group, sub_group, apis, path_map, dual_method_ids)
 
             if flat:
                 out_file = output_dir / f"{top_group}.md"
@@ -457,12 +535,13 @@ def main():
     path_map   = parse_openapi_paths(openapi)
     flat_apis  = flatten_tree(tree_data)
     group_tree = build_group_tree(flat_apis)
+    dual_method_ids = _detect_dual_method_ids(flat_apis)
 
     # 生成子分组级 .md 文件
     output_dir: Path = args.output
 
     print("生成分组文档...")
-    records = write_references(group_tree, path_map, output_dir)
+    records = write_references(group_tree, path_map, output_dir, dual_method_ids)
 
     total_files = len(records)
     total_apis  = len(flat_apis)
