@@ -1,6 +1,6 @@
 ---
 name: investoday-finance-data
-version: 1.0.6
+version: 1.1.0
 description: 今日投资数据市场金融数据接口，覆盖A股/港股/基金/指数/宏观经济 180+ 个接口。当需要查询股票行情、财务报表、公司公告、研报评级、基金净值、行业分析、宏观经济指标时使用；或需要实体识别（股票代码与名称互转）、构建量化分析、生成投研报告等金融数据场景。
 homepage: https://github.com/investoday-data/investoday-api-skills.git
 tags:
@@ -62,15 +62,18 @@ metadata:
 
 # 今日投资数据市场 (InvestToday)
 
+> 国际用户请查看英文版：[SKILL_EN.md](./SKILL_EN.md)  
+> For international users, see: [SKILL_EN.md](./SKILL_EN.md)
+
 今日投资数据市场提供 A 股、港股、基金、指数、宏观经济等 180+ 个金融数据接口。
 
 ## API Key
 
 - [注册获取 API Key](https://data-api.investoday.net/login)
 - 在当前 Skill 所在的根目录创建 `.env` 文件（与 `SKILL.md` 同级目录），例如：
-  - Cursor：`.cursor/skills/investoday-finance-data/.env`
+  - OpencCaw`.openclaw/workspace/skills/investoday-finance-data/.env`
   - Claude Code：`.claude/skills/investoday-finance-data/.env`
-```
+```bash
 INVESTODAY_API_KEY=<your_key>
 ```
 - 也可通过环境变量配置（注意不要在终端历史中留下明文 Key）
@@ -86,7 +89,7 @@ INVESTODAY_API_KEY=<your_key>
 > ✅ API Key 已配置完成。API Key 是您访问数据的唯一凭证，请妥善保管，切勿通过聊天、截图或代码提交等任何方式泄露给他人。
 
 3. 调用 API 时，**不要**在命令行参数、日志或错误信息中包含 API Key
-4. 如需验证 Key 是否已配置，只输出"已配置"或"未配置"，**不要**输出 Key 的任何部分
+4. 如需验证 Key 是否已配置，只输出“已配置”或“未配置”，**不要**输出 Key 的任何部分
 
 ## 调用接口
 
@@ -101,7 +104,7 @@ python skills/scripts/call_api.py <接口路径> --method POST [key=value ...]
 python skills/scripts/call_api.py <接口路径> --method POST codes=000001 codes=000002
 ```
 
-接口的 GET / POST 方法见 references/ 文档中的标记。输出为 JSON，失败时打印错误信息。
+接口的 GET / POST 方法见 `references/` 文档中的标记。输出为 JSON，失败时打印错误信息。
 
 **示例**
 
@@ -114,47 +117,47 @@ python skills/scripts/call_api.py fund/daily-quotes --method POST fundCode=00000
 
 ## 接口索引
 
-在对应分类的 references/ 文档中查找**接口路径**和**输入参数**。
+在对应分类的 `references/` 文档中查找**接口路径**和**输入参数**。
 
-| 分类 | 子分类 | 接口数 | 文档 |
-|------|--------|:------:|------|
-| 基础数据 | — | 5 | [基础数据.md](references/基础数据.md) |
-| 市场数据 | — | 1 | [市场数据.md](references/市场数据.md) |
-| 沪深京数据 | 基础信息 | 4 | [基础信息.md](references/沪深京数据/基础信息.md) |
-|  | 股票行情 | 17 | [股票行情.md](references/沪深京数据/股票行情.md) |
-|  | 财务数据 | 24 | [财务数据.md](references/沪深京数据/财务数据.md) |
-|  | 特色数据 | 18 | [特色数据.md](references/沪深京数据/特色数据.md) |
-|  | 公司行为 | 29 | [公司行为.md](references/沪深京数据/公司行为.md) |
-| 板块 | 基础行情 | 3 | [基础行情.md](references/板块/基础行情.md) |
-|  | 衍生行情 | 2 | [衍生行情.md](references/板块/衍生行情.md) |
-|  | 基础数据 | 3 | [基础数据.md](references/板块/基础数据.md) |
-|  | 财务数据 | 1 | [财务数据.md](references/板块/财务数据.md) |
-|  | 特色数据 | 1 | [特色数据.md](references/板块/特色数据.md) |
-|  | 分析与预测 | 1 | [分析与预测.md](references/板块/分析与预测.md) |
-| 指数 | 基础行情 | 2 | [基础行情.md](references/指数/基础行情.md) |
-|  | 技术指标 | 1 | [技术指标.md](references/指数/技术指标.md) |
-|  | 行情衍生数据 | 1 | [行情衍生数据.md](references/指数/行情衍生数据.md) |
-|  | 指数资料 | 1 | [指数资料.md](references/指数/指数资料.md) |
-| 新闻与观点 | 基础数据 | 2 | [基础数据.md](references/新闻与观点/基础数据.md) |
-| 研报 | 基础数据 | 1 | [基础数据.md](references/研报/基础数据.md) |
-|  | 特色数据 | 1 | [特色数据.md](references/研报/特色数据.md) |
-|  | 投资评级 | 2 | [投资评级.md](references/研报/投资评级.md) |
-| 公告 | — | 2 | [公告.md](references/公告.md) |
-| 港股 | 财务数据 | 3 | [财务数据.md](references/港股/财务数据.md) |
-|  | 基础数据 | 3 | [基础数据.md](references/港股/基础数据.md) |
-|  | 港股行情 | 7 | [港股行情.md](references/港股/港股行情.md) |
-|  | 公司行为 | 2 | [公司行为.md](references/港股/公司行为.md) |
-| 工具 | 图标 | 2 | [图标.md](references/工具/图标.md) |
-| 宏观经济 | 国内宏观 | 2 | [国内宏观.md](references/宏观经济/国内宏观.md) |
-| 大模型语料 | — | 2 | [大模型语料.md](references/大模型语料.md) |
-| 基金 | 基金行情 | 4 | [基金行情.md](references/基金/基金行情.md) |
-|  | 基金资料 | 12 | [基金资料.md](references/基金/基金资料.md) |
-|  | 基金业绩表现 | 12 | [基金业绩表现.md](references/基金/基金业绩表现.md) |
-|  | 基金投资组合 | 6 | [基金投资组合.md](references/基金/基金投资组合.md) |
-|  | 基金持有人 | 2 | [基金持有人.md](references/基金/基金持有人.md) |
-|  | 特色数据 | 3 | [特色数据.md](references/基金/特色数据.md) |
-|  | ETF基金 | 2 | [ETF基金.md](references/基金/ETF基金.md) |
-|  | 基金财务数据 | 2 | [基金财务数据.md](references/基金/基金财务数据.md) |
+| 分类 | 子分类 | 文档 |
+|------|--------|------|
+| 基础数据 | — | [基础数据.md](references/基础数据.md) |
+| 市场数据 | — | [市场数据.md](references/市场数据.md) |
+| 沪深京数据 | 基础信息 | [基础信息.md](references/沪深京数据/基础信息.md) |
+|  | 股票行情 | [股票行情.md](references/沪深京数据/股票行情.md) |
+|  | 财务数据 | [财务数据.md](references/沪深京数据/财务数据.md) |
+|  | 特色数据 | [特色数据.md](references/沪深京数据/特色数据.md) |
+|  | 公司行为 | [公司行为.md](references/沪深京数据/公司行为.md) |
+| 板块 | 基础行情 | [基础行情.md](references/板块/基础行情.md) |
+|  | 衍生行情 | [衍生行情.md](references/板块/衍生行情.md) |
+|  | 基础数据 | [基础数据.md](references/板块/基础数据.md) |
+|  | 财务数据 | [财务数据.md](references/板块/财务数据.md) |
+|  | 特色数据 | [特色数据.md](references/板块/特色数据.md) |
+|  | 分析与预测 | [分析与预测.md](references/板块/分析与预测.md) |
+| 指数 | 基础行情 | [基础行情.md](references/指数/基础行情.md) |
+|  | 技术指标 | [技术指标.md](references/指数/技术指标.md) |
+|  | 行情衍生数据 | [行情衍生数据.md](references/指数/行情衍生数据.md) |
+|  | 指数资料 | [指数资料.md](references/指数/指数资料.md) |
+| 新闻与观点 | 基础数据 | [基础数据.md](references/新闻与观点/基础数据.md) |
+| 研报 | 基础数据 | [基础数据.md](references/研报/基础数据.md) |
+|  | 特色数据 | [特色数据.md](references/研报/特色数据.md) |
+|  | 投资评级 | [投资评级.md](references/研报/投资评级.md) |
+| 公告 | — | [公告.md](references/公告.md) |
+| 港股 | 财务数据 | [财务数据.md](references/港股/财务数据.md) |
+|  | 基础数据 | [基础数据.md](references/港股/基础数据.md) |
+|  | 港股行情 | [港股行情.md](references/港股/港股行情.md) |
+|  | 公司行为 | [公司行为.md](references/港股/公司行为.md) |
+| 工具 | 图标 | [图标.md](references/工具/图标.md) |
+| 宏观经济 | 国内宏观 | [国内宏观.md](references/宏观经济/国内宏观.md) |
+| 大模型语料 | — | [大模型语料.md](references/大模型语料.md) |
+| 基金 | 基金行情 | [基金行情.md](references/基金/基金行情.md) |
+|  | 基金资料 | [基金资料.md](references/基金/基金资料.md) |
+|  | 基金业绩表现 | [基金业绩表现.md](references/基金/基金业绩表现.md) |
+|  | 基金投资组合 | [基金投资组合.md](references/基金/基金投资组合.md) |
+|  | 基金持有人 | [基金持有人.md](references/基金/基金持有人.md) |
+|  | 特色数据 | [特色数据.md](references/基金/特色数据.md) |
+|  | ETF基金 | [ETF基金.md](references/基金/ETF基金.md) |
+|  | 基金财务数据 | [基金财务数据.md](references/基金/基金财务数据.md) |
 
 ## 安全与隐私
 
