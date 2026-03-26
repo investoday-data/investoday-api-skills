@@ -4614,6 +4614,172 @@
             }
           ],
           "apis": []
+        },
+        {
+          "createBy": null,
+          "createByName": null,
+          "createTime": null,
+          "updateBy": null,
+          "updateTime": null,
+          "groupId": 11154,
+          "groupName": "产业链",
+          "groupDesc": null,
+          "parentId": 1,
+          "userId": null,
+          "apiCount": 0,
+          "isShow": 1,
+          "children": [
+            {
+              "createBy": null,
+              "createByName": null,
+              "createTime": null,
+              "updateBy": null,
+              "updateTime": null,
+              "groupId": 11155,
+              "groupName": "基础信息",
+              "groupDesc": null,
+              "parentId": 11154,
+              "userId": null,
+              "apiCount": 0,
+              "isShow": 1,
+              "children": [],
+              "apis": [
+                {
+                  "apiId": 110518,
+                  "apiName": "上市发债企业基本信息",
+                  "apiType": "SQL",
+                  "apiStatus": "release",
+                  "groupId": 11155,
+                  "remarks": null,
+                  "toolName": "get_chain_bond_issuers",
+                  "toolId": "get_chain_bond_issuers",
+                  "apiPath": "chain/bond-issuers",
+                  "enabled": 1,
+                  "apiAccessLevel": "L2",
+                  "apiMethod": "POST"
+                },
+                {
+                  "apiId": 110519,
+                  "apiName": "证券基础信息(产业链）",
+                  "apiType": "SQL",
+                  "apiStatus": "release",
+                  "groupId": 11155,
+                  "remarks": null,
+                  "toolName": "get_chain_sec_basic_info",
+                  "toolId": "get_chain_sec_basic_info",
+                  "apiPath": "chain/sec-basic-info",
+                  "enabled": 1,
+                  "apiAccessLevel": "L2",
+                  "apiMethod": "POST"
+                },
+                {
+                  "apiId": 110520,
+                  "apiName": "行业信息(产业链）",
+                  "apiType": "SQL",
+                  "apiStatus": "release",
+                  "groupId": 11155,
+                  "remarks": null,
+                  "toolName": "get_chain_industry_info",
+                  "toolId": "c",
+                  "apiPath": "chain/industry-info",
+                  "enabled": 1,
+                  "apiAccessLevel": "L2",
+                  "apiMethod": "POST"
+                },
+                {
+                  "apiId": 110521,
+                  "apiName": "产品信息",
+                  "apiType": "SQL",
+                  "apiStatus": "release",
+                  "groupId": 11155,
+                  "remarks": null,
+                  "toolName": "get_chain_product_info",
+                  "toolId": "get_chain_product_info",
+                  "apiPath": "chain/product-info",
+                  "enabled": 1,
+                  "apiAccessLevel": "L2",
+                  "apiMethod": "POST"
+                }
+              ]
+            },
+            {
+              "createBy": null,
+              "createByName": null,
+              "createTime": null,
+              "updateBy": null,
+              "updateTime": null,
+              "groupId": 11156,
+              "groupName": "关系图谱",
+              "groupDesc": null,
+              "parentId": 11154,
+              "userId": null,
+              "apiCount": 0,
+              "isShow": 1,
+              "children": [],
+              "apis": [
+                {
+                  "apiId": 110522,
+                  "apiName": "产业链关系",
+                  "apiType": "SQL",
+                  "apiStatus": "release",
+                  "groupId": 11156,
+                  "remarks": null,
+                  "toolName": "list_chain_com_main_pro",
+                  "toolId": "get_chain_pro_relation",
+                  "apiPath": "chain/pro-relation",
+                  "enabled": 1,
+                  "apiAccessLevel": "L2",
+                  "apiMethod": "POST"
+                },
+                {
+                  "apiId": 110523,
+                  "apiName": "公司相关产业链图谱",
+                  "apiType": "SQL",
+                  "apiStatus": "release",
+                  "groupId": 11156,
+                  "remarks": null,
+                  "toolName": "list_chain_pro_ind_maps",
+                  "toolId": "list_chain_pro_ind_maps",
+                  "apiPath": "chain/pro-ind-maps",
+                  "enabled": 1,
+                  "apiAccessLevel": "L2",
+                  "apiMethod": "POST"
+                }
+              ]
+            },
+            {
+              "createBy": null,
+              "createByName": null,
+              "createTime": null,
+              "updateBy": null,
+              "updateTime": null,
+              "groupId": 11157,
+              "groupName": "经营分析",
+              "groupDesc": null,
+              "parentId": 11154,
+              "userId": null,
+              "apiCount": 0,
+              "isShow": 1,
+              "children": [],
+              "apis": [
+                {
+                  "apiId": 110524,
+                  "apiName": "公司的主营产品",
+                  "apiType": "SQL",
+                  "apiStatus": "release",
+                  "groupId": 11157,
+                  "remarks": null,
+                  "toolName": "list_chain_com_main_pro",
+                  "toolId": "list_chain_com_main_pro",
+                  "apiPath": "chain/com-main-pro",
+                  "enabled": 1,
+                  "apiAccessLevel": "L2",
+                  "apiMethod": "POST"
+                }
+              ]
+            }
+          ],
+          "apis": []
         }
       ],
       "apis": []
