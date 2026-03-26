@@ -39414,10 +39414,10 @@
           "行业行情统计"
         ],
         "summary": "行业行情统计",
-        "description": "通过行业代码（可选）查询指定行业（默认为全部行业）的行情统计数据，包括行业代码、名称、近一日至近五年等多个时间维度的涨跌幅、近一日至近二十日的主力资金净流入（万元），以及PE、PB、PS的近五年历史百分位，用于行业表现分析和资金流向监控。",
+        "description": "通过行业代码查询指定行业的行情统计数据，包含行业代码、名称、近一日至近五年等多个时间维度的涨跌幅、近一日至近二十日的主力资金净流入（万元），以及PE、PB、PS的近五年历史百分位，用于行业表现分析和资金流向监控。",
         "operationId": "get_industry_market_stats",
         "requestBody": {
-          "description": "通过行业代码（可选）查询指定行业（默认为全部行业）的行情统计数据，包括行业代码、名称、近一日至近五年等多个时间维度的涨跌幅、近一日至近二十日的主力资金净流入（万元），以及PE、PB、PS的近五年历史百分位，用于行业表现分析和资金流向监控。",
+          "description": "通过行业代码查询指定行业的行情统计数据，包含行业代码、名称、近一日至近五年等多个时间维度的涨跌幅、近一日至近二十日的主力资金净流入（万元），以及PE、PB、PS的近五年历史百分位，用于行业表现分析和资金流向监控。",
           "content": {
             "application/json": {
               "schema": {
@@ -40467,6 +40467,965 @@
                       "type": "number",
                       "description": "总市值 T日",
                       "example": 44213521214
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "无效请求"
+          },
+          "500": {
+            "description": "服务器内部错误"
+          }
+        },
+        "security": [
+          {
+            "ApiKeyAuth": []
+          }
+        ]
+      }
+    },
+    "/chain/bond-issuers": {
+      "post": {
+        "tags": [
+          "上市发债企业基本信息"
+        ],
+        "summary": "上市发债企业基本信息",
+        "description": "通过企业ID或企业名称（支持模糊匹配）查询上市发债企业的基本信息，包括企业统一社会信用代码、中英文名称、是否为发债公司、是否为上市公司以及相关机构ID等核心标识信息，用于快速识别和筛选符合条件的发债主体。",
+        "operationId": "get_chain_bond_issuers",
+        "requestBody": {
+          "description": "通过企业ID或企业名称（支持模糊匹配）查询上市发债企业的基本信息，包括企业统一社会信用代码、中英文名称、是否为发债公司、是否为上市公司以及相关机构ID等核心标识信息，用于快速识别和筛选符合条件的发债主体。",
+          "content": {
+            "application/json": {
+              "schema": {
+                "required": [
+                  "companyName"
+                ],
+                "type": "object",
+                "properties": {
+                  "companyName": {
+                    "type": "string",
+                    "description": "企业名称",
+                    "example": "广东粤运交通股份有限公司"
+                  }
+                }
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "成功响应",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "integer",
+                      "description": "响应状态码",
+                      "format": "int32",
+                      "example": 0
+                    },
+                    "message": {
+                      "type": "string",
+                      "description": "响应消息",
+                      "example": "success"
+                    },
+                    "companyId": {
+                      "type": "string",
+                      "description": "企业ID",
+                      "example": "CSF0000000010"
+                    },
+                    "creditCode": {
+                      "type": "string",
+                      "description": "统一社会信用代码",
+                      "example": "9144xxx0719285123G"
+                    },
+                    "companyName": {
+                      "type": "string",
+                      "description": "企业名称",
+                      "example": "广东粤运交通股份有限公司"
+                    },
+                    "companyNameEn": {
+                      "type": "string",
+                      "description": "企业英文名称",
+                      "example": "Guangdong Yueyun Transportation Company Limited"
+                    },
+                    "isBondIssuer": {
+                      "type": "integer",
+                      "description": "是否为发债公司",
+                      "format": "int32",
+                      "example": 1,
+                      "allOf": [
+                        {
+                          "type": "integer",
+                          "description": "1代表是;0代表否;",
+                          "format": "int32",
+                          "enum": [
+                            1,
+                            0
+                          ]
+                        }
+                      ]
+                    },
+                    "isListed": {
+                      "type": "integer",
+                      "description": "是否为上市公司",
+                      "format": "int32",
+                      "example": 1,
+                      "allOf": [
+                        {
+                          "type": "integer",
+                          "description": "1代表是;0代表否;",
+                          "format": "int32",
+                          "enum": [
+                            1,
+                            0
+                          ]
+                        }
+                      ]
+                    },
+                    "refCompanyId": {
+                      "type": "string",
+                      "description": "相关机构id",
+                      "example": "CSF0000000010"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "无效请求"
+          },
+          "500": {
+            "description": "服务器内部错误"
+          }
+        },
+        "security": [
+          {
+            "ApiKeyAuth": []
+          }
+        ]
+      }
+    },
+    "/chain/sec-basic-info": {
+      "post": {
+        "tags": [
+          "证券基础信息(产业链）"
+        ],
+        "summary": "证券基础信息(产业链）",
+        "description": "通过股票代码查询证券（股票）的基础信息，包括证券代码、证券中英文简称、所属公司的中英文名称及机构标准代码、上市市场代码及中英文名称、上市状态、上市日期（yyyy-MM-dd HH:mm:ss）和退市日期（yyyy-MM-dd HH:mm:ss），适用于获取证券的标识、所属主体及上市状态等核心元数据。",
+        "operationId": "get_chain_sec_basic_info",
+        "requestBody": {
+          "description": "通过股票代码查询证券（股票）的基础信息，包括证券代码、证券中英文简称、所属公司的中英文名称及机构标准代码、上市市场代码及中英文名称、上市状态、上市日期（yyyy-MM-dd HH:mm:ss）和退市日期（yyyy-MM-dd HH:mm:ss），适用于获取证券的标识、所属主体及上市状态等核心元数据。",
+          "content": {
+            "application/json": {
+              "schema": {
+                "required": [
+                  "stockCode"
+                ],
+                "type": "object",
+                "properties": {
+                  "stockCode": {
+                    "type": "string",
+                    "description": "股票代码",
+                    "example": "000001"
+                  }
+                }
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "成功响应",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "integer",
+                      "description": "响应状态码",
+                      "format": "int32",
+                      "example": 0
+                    },
+                    "message": {
+                      "type": "string",
+                      "description": "响应消息",
+                      "example": "success"
+                    },
+                    "stockCode": {
+                      "type": "string",
+                      "description": "交易代码",
+                      "example": "002054"
+                    },
+                    "stockName": {
+                      "type": "string",
+                      "description": "证券中文简称",
+                      "example": "德美化工"
+                    },
+                    "stockNameEn": {
+                      "type": "string",
+                      "description": "证券英文简称",
+                      "example": "Dymatic Chemicals"
+                    },
+                    "companyId": {
+                      "type": "string",
+                      "description": "机构标准代码",
+                      "example": "CSF0000000712"
+                    },
+                    "companyName": {
+                      "type": "string",
+                      "description": "机构中文名称",
+                      "example": "广东德美精细化工集团股份有限公司"
+                    },
+                    "companyNameEn": {
+                      "type": "string",
+                      "description": "机构英文名称",
+                      "example": "Dymatic Chemicals,Inc."
+                    },
+                    "marketCode": {
+                      "type": "string",
+                      "description": "市场编码",
+                      "example": "1002"
+                    },
+                    "marketName": {
+                      "type": "string",
+                      "description": "市场中文名称",
+                      "example": "深圳证券交易所主板A股"
+                    },
+                    "marketNameEn": {
+                      "type": "string",
+                      "description": "市场英文名称",
+                      "example": "SZSE Main Board A Share"
+                    },
+                    "listStatus": {
+                      "type": "string",
+                      "description": "上市状态编码",
+                      "example": "LT",
+                      "allOf": [
+                        {
+                          "type": "string",
+                          "description": "LT代表正常上市;DL代表终止上市;LS代表暂缓上市;ST代表ST;SST代表*ST;IBNL代表已发行未上市;PRED代表预披露;FTPR代表未过会;FTI代表发行失败;TF代表转板（NY和NQ两个市场转板）;TC代表更名;",
+                          "enum": [
+                            "LT",
+                            "DL",
+                            "LS",
+                            "ST",
+                            "SST",
+                            "IBNL",
+                            "PRED",
+                            "FTPR",
+                            "FTI",
+                            "TF",
+                            "TC"
+                          ]
+                        }
+                      ]
+                    },
+                    "listDate": {
+                      "type": "string",
+                      "description": "上市日期",
+                      "example": "2006-07-25 00:00:00.000"
+                    },
+                    "delistDate": {
+                      "type": "string",
+                      "description": "退市日期",
+                      "example": "2025-07-25 00:00:00.000"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "无效请求"
+          },
+          "500": {
+            "description": "服务器内部错误"
+          }
+        },
+        "security": [
+          {
+            "ApiKeyAuth": []
+          }
+        ]
+      }
+    },
+    "/chain/industry-info": {
+      "post": {
+        "tags": [
+          "行业信息(产业链）"
+        ],
+        "summary": "行业信息(产业链）",
+        "description": "通过行业代码或行业名称（支持模糊匹配）查询产业链行业分类信息，返回行业代码、名称、父级代码、所有祖先代码、分类体系（如CSF、CSRC等）及行业层级等核心数据，用于构建和分析产业链上下游关系及行业分类体系。",
+        "operationId": "c",
+        "requestBody": {
+          "description": "通过行业代码或行业名称（支持模糊匹配）查询产业链行业分类信息，返回行业代码、名称、父级代码、所有祖先代码、分类体系（如CSF、CSRC等）及行业层级等核心数据，用于构建和分析产业链上下游关系及行业分类体系。",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "industryName": {
+                    "type": "string",
+                    "description": "行业名称【与industryCode组成多选多参数，必须传递其中一个至多个】",
+                    "example": "商品化工"
+                  },
+                  "industryCode": {
+                    "type": "string",
+                    "description": "行业编码【与industryName组成多选多参数，必须传递其中一个至多个】",
+                    "example": "CSF_15101010"
+                  }
+                }
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "成功响应",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "integer",
+                      "description": "响应状态码",
+                      "format": "int32",
+                      "example": 0
+                    },
+                    "message": {
+                      "type": "string",
+                      "description": "响应消息",
+                      "example": "success"
+                    },
+                    "industryCode": {
+                      "type": "string",
+                      "description": "行业编码",
+                      "example": "CSF_101010"
+                    },
+                    "industryName": {
+                      "type": "string",
+                      "description": "行业中文名称",
+                      "example": "能源设备与服务"
+                    },
+                    "parentCode": {
+                      "type": "string",
+                      "description": "行业父层级",
+                      "example": "CSF_1010"
+                    },
+                    "ancestorsCodes": {
+                      "type": "string",
+                      "description": "行业所有父层级",
+                      "example": "CSF_10, CSF_1010"
+                    },
+                    "industrySystem": {
+                      "type": "string",
+                      "description": "行业分类体系",
+                      "example": "CSF",
+                      "allOf": [
+                        {
+                          "type": "string",
+                          "description": "CSF代表行业分类;CSRC代表证监会行业分类;SYWG2014代表申银万国行业分类（新）;GB2017代表国民经济行业分类",
+                          "enum": [
+                            "CSF",
+                            "CSRC",
+                            "SYWG2014",
+                            "GB2017"
+                          ]
+                        }
+                      ]
+                    },
+                    "industryLevel": {
+                      "type": "integer",
+                      "description": "行业层级",
+                      "format": "int32",
+                      "example": 3
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "无效请求"
+          },
+          "500": {
+            "description": "服务器内部错误"
+          }
+        },
+        "security": [
+          {
+            "ApiKeyAuth": []
+          }
+        ]
+      }
+    },
+    "/chain/product-info": {
+      "post": {
+        "tags": [
+          "产品信息"
+        ],
+        "summary": "产品信息",
+        "description": "通过产品代码或产品名称（支持模糊查询）查询供应链产品信息，返回产品代码、名称、所属行业代码、产品层级、直属父级产品代码以及所有祖先层级产品代码，用于构建和分析产品层级关系及行业归属。",
+        "operationId": "get_chain_product_info",
+        "requestBody": {
+          "description": "通过产品代码或产品名称（支持模糊查询）查询供应链产品信息，返回产品代码、名称、所属行业代码、产品层级、直属父级产品代码以及所有祖先层级产品代码，用于构建和分析产品层级关系及行业归属。",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "productCode": {
+                    "type": "string",
+                    "description": "产品编码",
+                    "example": "P0007784"
+                  },
+                  "productName": {
+                    "type": "string",
+                    "description": "产品名称",
+                    "example": "白茶"
+                  }
+                }
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "成功响应",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "integer",
+                      "description": "响应状态码",
+                      "format": "int32",
+                      "example": 0
+                    },
+                    "message": {
+                      "type": "string",
+                      "description": "响应消息",
+                      "example": "success"
+                    },
+                    "parentCode": {
+                      "type": "string",
+                      "description": "产业代码",
+                      "example": "P0007783"
+                    },
+                    "productName": {
+                      "type": "string",
+                      "description": "产业名称",
+                      "example": "白茶"
+                    },
+                    "industryCode": {
+                      "type": "string",
+                      "description": "行业代码",
+                      "example": "CSF_30202010"
+                    },
+                    "productCode": {
+                      "type": "string",
+                      "description": "直属父层级产品编码",
+                      "example": "FP00100303"
+                    },
+                    "ancestorsCodes": {
+                      "type": "string",
+                      "description": "所有父层级产品编码",
+                      "example": "FP001, FP00100303"
+                    },
+                    "productLevel": {
+                      "type": "integer",
+                      "description": "产业层级",
+                      "format": "int32",
+                      "example": 3
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "无效请求"
+          },
+          "500": {
+            "description": "服务器内部错误"
+          }
+        },
+        "security": [
+          {
+            "ApiKeyAuth": []
+          }
+        ]
+      }
+    },
+    "/chain/pro-relation": {
+      "post": {
+        "tags": [
+          "产业链关系"
+        ],
+        "summary": "产业链关系",
+        "description": "通过产品代码或产品名称（支持模糊查询）查询产业链中产品的上下游关联关系，返回包括关联产品代码、名称、类型、关联重要性及关系类型等核心信息，用于分析产业链结构和产品间的依赖关系。",
+        "operationId": "get_chain_pro_relation",
+        "requestBody": {
+          "description": "通过产品代码或产品名称（支持模糊查询）查询产业链中产品的上下游关联关系，返回包括关联产品代码、名称、类型、关联重要性及关系类型等核心信息，用于分析产业链结构和产品间的依赖关系。",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "productCode": {
+                    "type": "string",
+                    "description": "产品代码",
+                    "example": "P0007786"
+                  },
+                  "productName": {
+                    "type": "string",
+                    "description": "产品名称",
+                    "example": "红茶"
+                  },
+                  "pageNum": {
+                    "type": "integer",
+                    "description": "页码。\n最小值:1;",
+                    "format": "int32",
+                    "example": 1
+                  },
+                  "pageSize": {
+                    "type": "integer",
+                    "description": "页长。\n最小值:1;\n最大值:500;",
+                    "format": "int32",
+                    "example": 10
+                  }
+                }
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "成功响应",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "integer",
+                      "description": "响应状态码",
+                      "format": "int32",
+                      "example": 0
+                    },
+                    "message": {
+                      "type": "string",
+                      "description": "响应消息",
+                      "example": "success"
+                    },
+                    "productCode": {
+                      "type": "string",
+                      "description": "主产业科目代码",
+                      "example": "TR00600102"
+                    },
+                    "productName": {
+                      "type": "string",
+                      "description": "产业名称",
+                      "example": "其他港口服务"
+                    },
+                    "relatedCode": {
+                      "type": "string",
+                      "description": "关联产业代码",
+                      "example": "FA007048"
+                    },
+                    "relatedName": {
+                      "type": "string",
+                      "description": "关联产业代码",
+                      "example": "港口机械"
+                    },
+                    "primaryType": {
+                      "type": "string",
+                      "description": " 主产业相对关联产业的关系类型",
+                      "example": "P",
+                      "allOf": [
+                        {
+                          "type": "string",
+                          "description": "A代表生产设备;D代表销售渠道;F代表辅助设备;M代表生产原料;P代表主体;R代表辅助材料;T代表技术服务;",
+                          "enum": [
+                            "A",
+                            "D",
+                            "F",
+                            "M",
+                            "P",
+                            "R",
+                            "T"
+                          ]
+                        }
+                      ]
+                    },
+                    "relatedType": {
+                      "type": "string",
+                      "description": "关联产业相对主产业的关系类型",
+                      "example": "A",
+                      "allOf": [
+                        {
+                          "type": "string",
+                          "description": "A代表生产设备;D代表销售渠道;F代表辅助设备;M代表生产原料;P代表主体;R代表辅助材料;T代表技术服务;",
+                          "enum": [
+                            "A",
+                            "D",
+                            "F",
+                            "M",
+                            "P",
+                            "R",
+                            "T"
+                          ]
+                        }
+                      ]
+                    },
+                    "importance": {
+                      "type": "integer",
+                      "description": "重要性",
+                      "format": "int32",
+                      "example": 4,
+                      "allOf": [
+                        {
+                          "type": "integer",
+                          "description": "4级代表最重要;3级代表较为重要;2级代表一般重要;1级代表不太重要;",
+                          "format": "int32",
+                          "enum": [
+                            "4级",
+                            "3级",
+                            "2级",
+                            "1级"
+                          ]
+                        }
+                      ]
+                    },
+                    "relationship": {
+                      "type": "integer",
+                      "description": "关联产业和产业的层级关系",
+                      "format": "int32",
+                      "example": -1,
+                      "allOf": [
+                        {
+                          "type": "integer",
+                          "description": "1代表下游;-1代表上游;",
+                          "format": "int32",
+                          "enum": [
+                            1,
+                            -1
+                          ]
+                        }
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "无效请求"
+          },
+          "500": {
+            "description": "服务器内部错误"
+          }
+        },
+        "security": [
+          {
+            "ApiKeyAuth": []
+          }
+        ]
+      }
+    },
+    "/chain/pro-ind-maps": {
+      "post": {
+        "tags": [
+          "公司相关产业链图谱"
+        ],
+        "summary": "公司相关产业链图谱",
+        "description": "根据股票代码和发布日期范围，查询上市公司主营产品及其在产业链中的上下游关联关系，返回股票信息、产品信息、关联科目代码、名称、关系类型及层级，用于分析产业链图谱。",
+        "operationId": "list_chain_pro_ind_maps",
+        "requestBody": {
+          "description": "根据股票代码和发布日期范围，查询上市公司主营产品及其在产业链中的上下游关联关系，返回股票信息、产品信息、关联科目代码、名称、关系类型及层级，用于分析产业链图谱。",
+          "content": {
+            "application/json": {
+              "schema": {
+                "required": [
+                  "stockCode"
+                ],
+                "type": "object",
+                "properties": {
+                  "stockCode": {
+                    "type": "string",
+                    "description": "股票代码",
+                    "example": "002594"
+                  },
+                  "beginDate": {
+                    "type": "string",
+                    "description": "开始日期（格式yyyy-MM-dd）。\n最小值:2020-01-01;",
+                    "example": "2020-01-01"
+                  },
+                  "endDate": {
+                    "type": "string",
+                    "description": "结束日期（格式yyyy-MM-dd）",
+                    "example": "2025-01-01"
+                  },
+                  "pageNum": {
+                    "type": "integer",
+                    "description": "页码。\n最小值:1;",
+                    "format": "int32",
+                    "example": 1
+                  },
+                  "pageSize": {
+                    "type": "integer",
+                    "description": "页长。\n最小值:1;\n最大值:500;",
+                    "format": "int32",
+                    "example": 10
+                  }
+                }
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "成功响应",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "integer",
+                      "description": "响应状态码",
+                      "format": "int32",
+                      "example": 0
+                    },
+                    "message": {
+                      "type": "string",
+                      "description": "响应消息",
+                      "example": "success"
+                    },
+                    "stockCode": {
+                      "type": "string",
+                      "description": "股票代码",
+                      "example": "000001"
+                    },
+                    "stockName": {
+                      "type": "string",
+                      "description": "股票名称",
+                      "example": "平安银行"
+                    },
+                    "publishDate": {
+                      "type": "string",
+                      "description": "公告日期",
+                      "example": "2025-08-23 00:00:00.000"
+                    },
+                    "reportDateEnd": {
+                      "type": "string",
+                      "description": "报告日期",
+                      "example": "2025-06-30 00:00:00.000"
+                    },
+                    "productCode": {
+                      "type": "string",
+                      "description": "主营产业代码",
+                      "example": "FN001002"
+                    },
+                    "productName": {
+                      "type": "string",
+                      "description": "主营产品名称",
+                      "example": "综合性银行个人业务"
+                    },
+                    "relatedCode": {
+                      "type": "string",
+                      "description": "关联产业编码",
+                      "example": "P0007943"
+                    },
+                    "relatedName": {
+                      "type": "string",
+                      "description": "关联产业名称",
+                      "example": "防火墙"
+                    },
+                    "relatedType": {
+                      "type": "string",
+                      "description": "关联产业相对主产业的关系类型",
+                      "example": "T",
+                      "allOf": [
+                        {
+                          "type": "string",
+                          "description": "A代表生产设备;D代表销售渠道;F代表辅助设备;M代表生产原料;P代表主体;R代表辅助材料;T代表技术服务;",
+                          "enum": [
+                            "A",
+                            "D",
+                            "F",
+                            "M",
+                            "P",
+                            "R",
+                            "T"
+                          ]
+                        }
+                      ]
+                    },
+                    "relationship": {
+                      "type": "string",
+                      "description": "关联产业和主产业的层级关系",
+                      "example": "-1",
+                      "allOf": [
+                        {
+                          "type": "string",
+                          "description": "1代表下游;-1代表上游;",
+                          "enum": [
+                            "1",
+                            "-1"
+                          ]
+                        }
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "无效请求"
+          },
+          "500": {
+            "description": "服务器内部错误"
+          }
+        },
+        "security": [
+          {
+            "ApiKeyAuth": []
+          }
+        ]
+      }
+    },
+    "/chain/com-main-pro": {
+      "post": {
+        "tags": [
+          "公司的主营产品"
+        ],
+        "summary": "公司的主营产品",
+        "description": "通过股票代码和财报发布日期范围，查询上市公司主营产品的财务数据，包括产品名称、产品收入、产品收入占比、产品毛利、产品毛利占比等核心指标，以及财报公告日期和报告截止日期，用于分析公司主营业务构成和盈利能力。",
+        "operationId": "list_chain_com_main_pro",
+        "requestBody": {
+          "description": "通过股票代码和财报发布日期范围，查询上市公司主营产品的财务数据，包括产品名称、产品收入、产品收入占比、产品毛利、产品毛利占比等核心指标，以及财报公告日期和报告截止日期，用于分析公司主营业务构成和盈利能力。",
+          "content": {
+            "application/json": {
+              "schema": {
+                "required": [
+                  "stockCode"
+                ],
+                "type": "object",
+                "properties": {
+                  "stockCode": {
+                    "type": "string",
+                    "description": "股票代码",
+                    "example": "002594"
+                  },
+                  "beginDate": {
+                    "type": "string",
+                    "description": "开始日期（格式yyyy-MM-dd）。\n最小值:2020-01-01;",
+                    "example": "2020-01-01"
+                  },
+                  "endDate": {
+                    "type": "string",
+                    "description": "结束日期（格式yyyy-MM-dd）",
+                    "example": "2025-01-01"
+                  },
+                  "pageNum": {
+                    "type": "integer",
+                    "description": "页码。\n最小值:1;",
+                    "format": "int32",
+                    "example": 1
+                  },
+                  "pageSize": {
+                    "type": "integer",
+                    "description": "页长。\n最小值:1;\n最大值:500;",
+                    "format": "int32",
+                    "example": 10
+                  }
+                }
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "成功响应",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "integer",
+                      "description": "响应状态码",
+                      "format": "int32",
+                      "example": 0
+                    },
+                    "message": {
+                      "type": "string",
+                      "description": "响应消息",
+                      "example": "success"
+                    },
+                    "stockOde": {
+                      "type": "string",
+                      "description": "交易代码",
+                      "example": "000001"
+                    },
+                    "stockName": {
+                      "type": "string",
+                      "description": "证券中文简称",
+                      "example": "平安银行"
+                    },
+                    "publishDate": {
+                      "type": "string",
+                      "description": "公告日期",
+                      "example": "2018-08-16 00:00:00.000"
+                    },
+                    "reportDateEnd": {
+                      "type": "string",
+                      "description": "报告日期",
+                      "example": "2018-06-30 00:00:00.000"
+                    },
+                    "productName": {
+                      "type": "string",
+                      "description": "中文名称",
+                      "example": "综合性银行个人业务"
+                    },
+                    "productIncome": {
+                      "type": "number",
+                      "description": "主营产业收入",
+                      "example": 29316000000.0
+                    },
+                    "productIncomeRatio": {
+                      "type": "number",
+                      "description": "主营产业收入占比",
+                      "example": 0.51215
+                    },
+                    "productProfit": {
+                      "type": "number",
+                      "description": "主营产业毛利",
+                      "example": 11794000000.0
+                    },
+                    "productProfitRatio": {
+                      "type": "number",
+                      "description": "主营产业毛利占比",
+                      "example": 0.677738
                     }
                   }
                 }
