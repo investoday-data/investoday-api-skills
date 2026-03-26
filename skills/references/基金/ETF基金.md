@@ -25,7 +25,7 @@ tool_id: `list_etf_sub_red_lists`
 
 ```bash
 # 可选参数: fundCode, fundCodes, beginDate, endDate, pageNum, pageSize
-python skills/scripts/call_api.py fund/etf-sub-redemption-list --method POST
+node scripts/call_api.js fund/etf-sub-redemption-list --method POST
 ```
 
 ---
@@ -53,7 +53,7 @@ tool_id: `list_etf_constituent_stks`
 
 ```bash
 # 可选参数: fundCode, fundCodes, beginDate, endDate, pageNum, pageSize
-python skills/scripts/call_api.py fund/etf-constituent-stocks --method POST
+node scripts/call_api.js fund/etf-constituent-stocks --method POST
 ```
 
 ---

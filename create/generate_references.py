@@ -299,7 +299,7 @@ def _code_example(api_path: str, method: str, params: list[dict]) -> str:
     required = [p for p in params if p.get("required")]
     show     = required if required else []
 
-    parts = [f"python skills/scripts/call_api.py {api_path}"]
+    parts = [f"node scripts/call_api.js {api_path}"]
     if method == "POST":
         parts.append("--method POST")
 

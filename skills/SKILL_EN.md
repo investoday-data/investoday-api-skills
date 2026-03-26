@@ -32,13 +32,13 @@ INVESTODAY_API_KEY=<your_key>
 
 ```bash
 # GET (default)
-python skills/scripts/call_api.py <endpoint> [key=value ...]
+node scripts/call_api.js <endpoint> [key=value ...]
 
 # POST (parameters are sent as JSON body)
-python skills/scripts/call_api.py <endpoint> --method POST [key=value ...]
+node scripts/call_api.js <endpoint> --method POST [key=value ...]
 
 # Array parameters: repeat the same key
-python skills/scripts/call_api.py <endpoint> --method POST codes=000001 codes=000002
+node scripts/call_api.js <endpoint> --method POST codes=000001 codes=000002
 ```
 
 Check the `references/` docs for whether an endpoint uses GET or POST. Responses are returned as JSON. Failures are printed as error messages.
@@ -46,10 +46,10 @@ Check the `references/` docs for whether an endpoint uses GET or POST. Responses
 **Examples**
 
 ```bash
-python skills/scripts/call_api.py search key=600519 type=11
-python skills/scripts/call_api.py stock/basic-info stockCode=600519
-python skills/scripts/call_api.py stock/adjusted-quotes stockCode=600519 beginDate=2024-01-01 endDate=2024-12-31
-python skills/scripts/call_api.py fund/daily-quotes --method POST fundCode=000001 beginDate=2024-01-01 endDate=2024-12-31
+node scripts/call_api.js search key=600519 type=11
+node scripts/call_api.js stock/basic-info stockCode=600519
+node scripts/call_api.js stock/adjusted-quotes stockCode=600519 beginDate=2024-01-01 endDate=2024-12-31
+node scripts/call_api.js fund/daily-quotes --method POST fundCode=000001 beginDate=2024-01-01 endDate=2024-12-31
 ```
 
 ## Reference Index
