@@ -62,8 +62,7 @@ function loadApiKey() {
   if (fileKey) return fileKey;
 
   process.stderr.write(
-    "ERROR: 请配置 INVESTODAY_API_KEY 后再请求。" +
-    "请设置环境变量 INVESTODAY_API_KEY，或在 Skill 根目录创建 .env 文件。\n"
+    "ERROR: 设置环境变量 INVESTODAY_API_KEY 后再请求。"
   );
   process.exit(1);
 }

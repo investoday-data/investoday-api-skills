@@ -231,18 +231,33 @@ def _extract_response_fields(operation: dict) -> list[dict]:
         return []
 
 
+def _get_localized_field(data: dict, base_key: str, language: str = "zh") -> str:
+    value = data.get(base_key, "")
+    if language != "en":
+        return value
+    for candidate in (f"{base_key}En", f"{base_key}EN", f"{base_key}English"):
+        localized = data.get(candidate)
+        if localized:
+            return localized
+    return value
+
+
 def flatten_tree(nodes: list, parent_path: list | None = None) -> list[dict]:
     """递归展平分组树，返回包含完整路径的 API 条目列表"""
     if parent_path is None:
         parent_path = []
     results = []
     for node in nodes:
-        current_path = parent_path + [node.get("groupName", "")]
+        current_path = parent_path + [{
+            "zh": node.get("groupName", ""),
+            "en": _get_localized_field(node, "groupName", "en"),
+        }]
         for child in node.get("children", []):
             results.extend(flatten_tree([child], current_path))
         for api in node.get("apis", []):
             results.append({
-                "group_path": current_path,
+                "group_path": [item["zh"] for item in current_path],
+                "group_path_en": [item["en"] for item in current_path],
                 "api_name":   api.get("apiName", ""),
                 "tool_name":  api.get("toolName", ""),
                 "tool_id":    api.get("toolId", ""),
@@ -468,20 +483,30 @@ def write_references(group_tree: dict, path_map: dict, output_dir: Path,
 
         for sub_group, apis in sub_groups.items():
             content = generate_subgroup_md(top_group, sub_group, apis, path_map, dual_method_ids)
+            first_api = apis[0] if apis else {}
+            localized_path = [
+                en_name or zh_name
+                for zh_name, en_name in zip(first_api.get("group_path", []), first_api.get("group_path_en", []))
+                if zh_name != "分组"
+            ]
+            top_group_en = localized_path[0] if localized_path else top_group
+            sub_group_en = top_group_en if flat else (localized_path[1] if len(localized_path) > 1 else sub_group)
 
             if flat:
                 out_file = output_dir / f"{top_group}.md"
-                rel_path = f"references/{top_group}.md"
             else:
                 sub_dir = output_dir / top_group
                 sub_dir.mkdir(exist_ok=True)
                 out_file = sub_dir / f"{sub_group}.md"
-                rel_path = f"references/{top_group}/{sub_group}.md"
+
+            rel_path = out_file.relative_to(output_dir.parent).as_posix()
 
             out_file.write_text(content, encoding="utf-8")
             records.append({
                 "top":      top_group,
                 "sub":      sub_group if not flat else "",
+                "top_en":   top_group_en,
+                "sub_en":   sub_group_en if not flat else "",
                 "count":    len(apis),
                 "rel_path": rel_path,
                 "flat":     flat,
@@ -491,18 +516,58 @@ def write_references(group_tree: dict, path_map: dict, output_dir: Path,
     return records
 
 
-def generate_skill_md_table(records: list[dict]) -> str:
-    """生成 SKILL.md 两级索引表"""
-    rows = ["| 分类 | 子分类 | 接口数 | 文档 |",
-            "|------|--------|:------:|------|"]
+def _resolve_index_labels(record: dict, language: str) -> tuple[str, str]:
+    if language != "en":
+        top_label = record["top"]
+        sub_label = record["top"] if record["flat"] else record["sub"]
+        return top_label, sub_label
+
+    top_label = record.get("top_en") or record["top"]
+    sub_label = top_label if record["flat"] else (record.get("sub_en") or record["sub"])
+    return top_label, sub_label
+
+
+def generate_references_index_md(records: list[dict], language: str = "zh") -> str:
+    if language == "en":
+        lines = [
+            "# Reference Index",
+            "",
+            "Check the files under `../references/` for endpoint paths, HTTP methods, and input parameters.",
+            "The reference documents themselves are currently maintained in Chinese.",
+            "",
+        ]
+    else:
+        lines = [
+            "# 接口索引",
+            "",
+            "在 `../references/` 目录中按分类查找接口路径、请求方法和输入参数。",
+            "",
+        ]
+
     prev_top = None
-    for r in records:
-        top  = r["top"] if r["top"] != prev_top else ""
-        sub  = r["sub"] or "—"
-        link = f"[{r['rel_path'].split('/')[-1]}]({r['rel_path']})"
-        rows.append(f"| {top} | {sub} | {r['count']} | {link} |")
-        prev_top = r["top"]
-    return "\n".join(rows)
+    for record in records:
+        top_group = record["top"]
+        if top_group != prev_top:
+            if prev_top is not None:
+                lines.append("")
+            heading, _ = _resolve_index_labels(record, language)
+            lines.append(f"## {heading}")
+            lines.append("")
+
+        _, title = _resolve_index_labels(record, language)
+        rel_path = f"../{record['rel_path']}"
+        lines.append(f"- [{title}]({rel_path})")
+        prev_top = top_group
+
+    lines.append("")
+    return "\n".join(lines)
+
+
+def write_references_index(records: list[dict], output_file: Path, language: str = "zh") -> None:
+    output_file.parent.mkdir(parents=True, exist_ok=True)
+    output_file.write_text(generate_references_index_md(records, language), encoding="utf-8")
+    print(f"  ✓ {output_file.relative_to(output_file.parent.parent)}")
+
 
 # ─── 入口 ──────────────────────────────────────────────────────────────────────
 
@@ -543,13 +608,13 @@ def main():
     print("生成分组文档...")
     records = write_references(group_tree, path_map, output_dir, dual_method_ids)
 
+    print("生成动态索引文档...")
+    write_references_index(records, output_dir.parent / "docs" / "references-index.md")
+    write_references_index(records, output_dir.parent / "docs" / "references-index.en.md", language="en")
+
     total_files = len(records)
     total_apis  = len(flat_apis)
     print(f"\n✅ 完成：共 {total_apis} 个接口，{total_files} 个文档 → {output_dir}")
-
-    # 打印 SKILL.md 表格（供参考）
-    print("\n── SKILL.md 接口索引表格（可复制）──")
-    print(generate_skill_md_table(records))
 
 
 if __name__ == "__main__":
