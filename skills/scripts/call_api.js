@@ -34,6 +34,7 @@ const path = require("path");
 
 const BASE_URL        = "https://data-api.investoday.net/data";
 const REQUEST_TIMEOUT = 30_000; // ms
+const SKILL_ENV_FILE  = path.resolve(__dirname, "..", ".env");
 
 // ─── API Key 加载 ──────────────────────────────────────────────────────────────
 
@@ -56,13 +57,13 @@ function loadApiKey() {
   const envKey = (process.env.INVESTODAY_API_KEY || "").trim();
   if (envKey) return envKey;
 
-  // 2. 当前工作目录下的 .env 文件
-  const fileKey = readEnvKey(path.join(process.cwd(), ".env"));
+  // 2. Skill 根目录下的固定 .env 文件
+  const fileKey = readEnvKey(SKILL_ENV_FILE);
   if (fileKey) return fileKey;
 
   process.stderr.write(
     "ERROR: 请配置 INVESTODAY_API_KEY 后再请求。" +
-    "请设置环境变量 INVESTODAY_API_KEY。\n"
+    "请设置环境变量 INVESTODAY_API_KEY，或在 Skill 根目录创建 .env 文件。\n"
   );
   process.exit(1);
 }
